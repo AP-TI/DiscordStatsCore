@@ -16,7 +16,12 @@ namespace DiscordStatsCore
         public TelOnline(Config config)
         {
             Config = config;
-            Server = Config.Database == Database.MongoDB ? new MongoServer(Config) : (DatabaseServer)new MySQLServer(Config);
+            Server = Config.Database switch
+            {
+                Database.MongoDB => new MongoServer(Config),
+                Database.MySQL => new MySQLServer(Config),
+                _ => new CouchServer(Config),
+            };
             Task t = Task.Run(async () => {
                 do
                 {
