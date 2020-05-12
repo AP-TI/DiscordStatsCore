@@ -19,7 +19,11 @@ namespace DiscordStatsCore
         {
             using (var client = new MyCouchClient(Config.ConnectionString, Config.DatabaseNaam))
             {
-                await client.Documents.PostAsync($"{{\"tijdstip\":{DateTime.Now.Ticks},\"aantal\":{aantalOnline},\"personen\":{jArray.ToString()}}}");
+                DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                DateTime utcNow = DateTime.UtcNow;
+                TimeSpan elapsedTime = utcNow - unixEpoch;
+                double millis = Math.Round(elapsedTime.TotalMilliseconds);
+                await client.Documents.PostAsync($"{{\"tijdstip\":{millis},\"aantal\":{aantalOnline},\"personen\":{jArray.ToString()}}}");
             }
         }
     }
